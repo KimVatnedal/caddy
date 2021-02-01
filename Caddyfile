@@ -1,0 +1,62 @@
+{
+    # email to use on Let's Encrypt
+    email kim@vatnedal.com
+    
+    # Uncomment for debug
+    #acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+    #debug
+}
+
+# Add gzip compression to requests
+(webconf) {
+  encode gzip
+}
+
+# Add forward headers to requests
+(theheaders) {
+    header X-Forwarded-Ssl on
+    header Host {host}
+    header X-Real-IP {remote}
+    header X-Forwarded-For {remote}
+    header X-Forwarded-Port {server_port}
+    header X-Forwarded-Proto {scheme}
+    header X-Url-Scheme {scheme}
+    header X-Forwarded-Host {host}
+}
+# The Caddyfile is an easy way to configure your Caddy web server.
+#
+# Unless the file starts with a global options block, the first
+# uncommented line is always the address of your site.
+#
+# To use your own domain name (with automatic HTTPS), first make
+# sure your domain's A/AAAA DNS records are properly pointed to
+# this machine's public IP, then replace the line below with your
+# domain name.
+vatnedal.com {
+
+tls {
+	dns cloudflare fQzpA8d_mrQDEtTlqUnlQYbznFAzKvmmVbudm51e
+}
+
+reverse_proxy /.well-known/matrix/* https://matrix.vatnedal.com {
+	header_up Host {http.reverse_proxy.upstream.hostport}
+	transport http {
+	        tls
+	    }
+  }
+
+root * /usr/share/caddy
+
+# Enable the static file server.
+file_server
+#import webconf
+
+# Another common task is to set up a reverse proxy:
+# reverse_proxy localhost:8080
+
+}
+# Or serve a PHP site through php-fpm:
+# php_fastcgi localhost:9000
+
+# Refer to the Caddy docs for more information:
+# https://caddyserver.com/docs/caddyfile
