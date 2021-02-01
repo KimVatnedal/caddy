@@ -3,12 +3,12 @@ name: Caddy
 on:
   push:
     #  branches:
-    #    - main  # Set a branch to deploy
+    #    - master  # Set a branch to deploy
     tags:
       - "*"
   workflow_dispatch:
     branches:
-      - main
+      - master
 jobs:
   deploy:
     runs-on: ubuntu-latest
